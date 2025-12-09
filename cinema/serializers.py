@@ -61,13 +61,12 @@ class MovieSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
 
     def create(self, validated_data):
-        movie = Movie.objects.create(
-            title=validated_data("title"),
-            description=validated_data("description"),
-            duration=validated_data("duration"),
-        )
-        movie.actors.set(validated_data.get("actors"))
-        movie.genres.set(validated_data.get("genres"))
+        actors = validated_data.pop("actors")
+        genres = validated_data.pop("genres")
+
+        movie = Movie.objects.create(**validated_data)
+        movie.actors.set(actors)
+        movie.genres.set(genres)
         return movie
 
     def update(self, instance, validated_data):
